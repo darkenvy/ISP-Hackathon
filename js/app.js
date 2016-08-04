@@ -117,7 +117,7 @@ $(document).ready(function() {
       labels: datasetTitles,
       datasets: [{
           label: 'Actual Speeds',
-          backgroundColor: "rgba(220,220,220,0.7)",
+          backgroundColor: "rgba(101,137,155,0.9)",
           data: dataset1
       }, {
           label: 'Advertised Speeds',
@@ -145,7 +145,7 @@ $(document).ready(function() {
   function validData(month, name) {
     if (monthData[month].hasOwnProperty(name)) {
       if (monthData[month][name].length == 3) {
-        return monthData[month][name][0] / monthData[month][name][2] 
+        return Math.floor(monthData[month][name][0] / monthData[month][name][2])
       }
     }
     else {
@@ -266,10 +266,11 @@ $(document).ready(function() {
   };
 
   $.each(config.data.datasets, function(i, dataset) {
-      dataset.borderColor = randomColor(0.4);
-      dataset.backgroundColor = randomColor(0.5);
-      dataset.pointBorderColor = randomColor(0.7);
-      dataset.pointBackgroundColor = randomColor(0.5);
+      allcolor = randomColor(0.4)
+      dataset.borderColor = allcolor;
+      dataset.backgroundColor = allcolor;
+      dataset.pointBorderColor = allcolor;
+      dataset.pointBackgroundColor = allcolor;
       dataset.pointBorderWidth = 1;
   });
 
