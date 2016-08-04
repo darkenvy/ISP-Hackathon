@@ -2,6 +2,8 @@
 var datasetTitles = []
 var dataset1 = []
 var dataset2 = []
+var dataset3 = []
+var monthData = {}
 
 function crunchData() {
   // labels: netData.sort().splice(0,5).map(function(item, idx) {return item.isp}),
@@ -29,6 +31,8 @@ function crunchData() {
   var sortData = regexData.sort(sortActualDl)
   var bigList = {}
   var bigList2 = {}
+  var bigList3 = {}
+  var bigList4 = {}
 
   // Make key/value pair
   sortData.forEach(function(item) {
@@ -36,7 +40,20 @@ function crunchData() {
     bigList[item.isp].push(item.actual_download) 
     bigList2[item.isp] === undefined ? bigList2[item.isp] = [] : false
     bigList2[item.isp].push(item.advertised_download) 
+    bigList3[item.isp] === undefined ? bigList3[item.isp] = [] : false
+    bigList3[item.isp].push({
+      "time": item.timestamp,
+      "actual_download": item.actual_download,
+      "advertised_download": item.advertised_download
+    })
+    tinyList3 = {}
+
   })
+
+  // console.log(bigList3);
+
+  // Convert bigList3 items (times in unix time) to months
+
 
   // construct all 3 dataset arrays
   // PS: they all line up. We just assume this
@@ -44,9 +61,36 @@ function crunchData() {
     datasetTitles.push(item)
     var avgAct = bigList[item].reduce(function(a,b) {return a+b}, 0) / bigList[item].length;
     var avgAd = bigList2[item].reduce(function(a,b) {return a+b}, 0) / bigList2[item].length;
+    for (i in bigList3) {
+      // We have to drill down and average speeds based on month
+      bigList3[i].forEach(function(each, idx) {
+        // Get the lookup key. The lookup ke will be 0-11 (month).
+        var theKey = new Date(bigList3[i][idx].time * 1000).getMonth();
+        // 3 keys in this array. running total actual, running total ads, count
+        if (monthData[theKey] === undefined) {
+          monthData[theKey] = {};
+          monthData[theKey][i] = [0,0,0]
+        }
+        if (monthData[theKey][i] === undefined) {
+          monthData[theKey][i] = [0,0,0]
+        }
+        // monthData[theKey] === undefined ? monthData[theKey] = {} : false
+        // console.log(monthData[theKey]);
+        monthData[theKey][i][0] += bigList3[i][idx].actual_download
+        monthData[theKey][i][1] += bigList3[i][idx].advertised_download
+        monthData[theKey][i][2] += 1
+      })
+      // bigList3[i].reduce(function(a,b) {return a+b}, 0)
+      // tinyList3[item] = [bigList3[item].reduce(function(a,b) {return a+b.actual_download}, 0) / bigList3[item].length ]
+      // tinyList3[item].push(bigList3[item].reduce(function(a,b) {return a+b.advertised_download}, 0) / bigList3[item].length)
+    }
+    
     dataset1.push(avgAct.toFixed(2))
     dataset2.push(avgAd.toFixed(2))
   }
+  console.log(monthData);
+
+
 
   // Thin out the data to only have 7 elements
   datasetTitles = datasetTitles.splice(0,7)
@@ -98,31 +142,92 @@ $(document).ready(function() {
       return 'rgba(' + randomColorFactor() + ',' + randomColorFactor() + ',' + randomColorFactor() + ',' + (opacity || '.3') + ')';
   };
 
+  function validData(month, name) {
+    if (monthData[month].hasOwnProperty(name)) {
+      if (monthData[month][name].length == 3) {
+        return monthData[month][name][0] / monthData[month][name][2] 
+      }
+    }
+    else {
+      return 0
+    }
+  }
+
   var config = {
       type: 'line',
       data: {
-          labels: ["January", "February", "March", "April", "May", "June", "July"],
+          labels: ["January", "February", "March", "April", "May", "June"],
           datasets: [{
-              label: "My First dataset",
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              label: datasetTitles[0],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'centurylink'),
+                      validData(2,'centurylink'),
+                      validData(3,'centurylink'),
+                      validData(4,'centurylink'),
+                      validData(5,'centurylink'),
+                      validData(6,'centurylink')
+                     ],
               fill: false,
-              borderDash: [5, 5],
+              // borderDash: [5, 5],
+          }, {
+              label: datasetTitles[1],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'comcast'),
+                      validData(2,'comcast'),
+                      validData(3,'comcast'),
+                      validData(4,'comcast'),
+                      validData(5,'comcast'),
+                      validData(6,'comcast')
+                     ],
+              fill: false,
           }, {
               hidden: true,
-              label: 'hidden dataset',
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              label: datasetTitles[2],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'verizon'),
+                      validData(2,'verizon'),
+                      validData(3,'verizon'),
+                      validData(4,'verizon'),
+                      validData(5,'verizon'),
+                      validData(6,'verizon')
+                     ],
+              fill: false,
           }, {
-              label: "My Second dataset",
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              hidden: true,
+              label: datasetTitles[3],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'frontier'),
+                      validData(2,'frontier'),
+                      validData(3,'frontier'),
+                      validData(4,'frontier'),
+                      validData(5,'frontier'),
+                      validData(6,'frontier')
+                     ],
+              fill: false,
           }, {
-              label: "My Second dataset",
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              hidden: true,
+              label: datasetTitles[4],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'twc'),
+                      validData(2,'twc'),
+                      validData(3,'twc'),
+                      validData(4,'twc'),
+                      validData(5,'twc'),
+                      validData(6,'twc')
+                     ],
+              fill: false,
           }, {
-              label: "My Second dataset",
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
-          }, {
-              label: "My Second dataset",
-              data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              hidden: true,
+              label: datasetTitles[5],
+              // data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()],
+              data: [ validData(1,'wave'),
+                      validData(2,'wave'),
+                      validData(3,'wave'),
+                      validData(4,'wave'),
+                      validData(5,'wave'),
+                      validData(6,'wave')
+                     ],
+              fill: false,
           }]
       },
       options: {
