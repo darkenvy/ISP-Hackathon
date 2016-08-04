@@ -69,11 +69,11 @@ $(document).ready(function() {
       labels: datasetTitles,
       datasets: [{
           label: 'Actual Speeds',
-          backgroundColor: "rgba(220,220,220,0.5)",
+          backgroundColor: "rgba(220,220,220,0.7)",
           data: dataset1
       }, {
           label: 'Advertised Speeds',
-          backgroundColor: "rgba(151,187,205,0.5)",
+          backgroundColor: "rgba(151,187,205,0.9)",
           data: dataset2
       }]
 
