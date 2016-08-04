@@ -234,7 +234,7 @@ $(document).ready(function() {
           responsive: true,
           title:{
               display:true,
-              text:'Chart.js Line Chart'
+              text:'Seattle ISP Data DL Speeds Over Time – In Mbps'
           },
           tooltips: {
               mode: 'label',
