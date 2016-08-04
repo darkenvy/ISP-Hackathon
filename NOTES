@@ -1,0 +1,10 @@
+netData.map(function(item, idx) {
+return new Date(item.timestamp * 1000).getDate();
+})
+
+// Sort function 
+netData.sort(function(a,b) {
+  if (a.actual_download < b.actual_download ) {
+    return 1;
+  } else {return -1;}
+})
