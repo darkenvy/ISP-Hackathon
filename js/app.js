@@ -7,14 +7,14 @@ $(document).ready(function() {
   var myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+          labels: ["Comcast-Ad", "Comcast-Real", "CenturyLink-Ad", "Century-Link-Real", "Wave-Ad", "Wave-Real"],
           datasets: [{
               label: '# of Votes',
               // data: [12, 19, 3, 5, 2, 3],
               data: theData,
               backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 0, 0, 0.2)',
+                  'rgba(255, 0, 0, 0.8)',
                   'rgba(255, 206, 86, 0.2)',
                   'rgba(75, 192, 192, 0.2)',
                   'rgba(153, 102, 255, 0.2)',
